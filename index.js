@@ -1,5 +1,3 @@
-const { result } = require('lodash');
-
 module.exports = async function (data) {
 
     // Lodash Module
@@ -101,8 +99,14 @@ module.exports = async function (data) {
 
                             // Check Results
                             if (Array.isArray(result.images) && result.images.length > 0 && typeof result.total === "number" && result.total > 0) {
-
+                                for (const image in result.images) {
+                                    image_list.push(result.images[image]);
+                                }
                             }
+
+                            // Complete
+                            fn();
+                            return;
 
                         }).catch(err => {
                             fn_error(err);
@@ -114,7 +118,7 @@ module.exports = async function (data) {
                     });
 
                     // Exist Data
-                    if (Array.isArray(image_list) && image_list.length > 0 && typeof result.total === "number" && result.total > 0) {
+                    if (Array.isArray(image_list) && image_list.length > 0 && typeof total_images === "number" && total_images > 0) {
                         await derpibooru.getDBItem('itemTotal').set(total_images)
                         errorResult.data = await derpibooru.updateDatabase(image_list);
                     }
