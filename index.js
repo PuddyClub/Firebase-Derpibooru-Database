@@ -3,13 +3,25 @@ module.exports = function (data) {
     // Lodash Module
     const _ = require('lodash');
 
+    // Config
     const tinyCfg = _.defaultsDeep({}, data.config, {
+        key: '',
         timeout: 10,
         pages: 1,
         query: '*',
         filter_id: 56027,
         per_page: 50
     });
+
+    // Config Key
+    if(
+        (typeof tinyCfg.key === "string" && tinyCfg.key.length > 0) ||
+        (typeof tinyCfg.key === "number" && !isNaN(tinyCfg.key))
+    ){
+        tinyCfg.key = '&key=' + encodeURIComponent(tinyCfg.key);
+    } else {
+        tinyCfg.key = '';
+    }
 
     // Create Settings
     const booru_settings = _.defaultsDeep({}, data.module, {
@@ -89,7 +101,7 @@ module.exports = function (data) {
                         const page = item + 1;
 
                         // Response
-                        fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=${String(page)}&per_page=${encodeURIComponent(tinyCfg.per_page)}`).then(response => {
+                        fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=${String(page)}&per_page=${encodeURIComponent(tinyCfg.per_page)}${tinyCfg.key}`).then(response => {
 
                             // Search Items
                             response.json().then(result => {
