@@ -1,2 +1,2 @@
 // Module
-const derpi_generator = require('../index');
+const DerpiFirebase = require('../index');

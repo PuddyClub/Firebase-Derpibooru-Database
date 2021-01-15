@@ -1,3 +1,5 @@
+const { result } = require('lodash');
+
 module.exports = async function (data) {
 
     // Lodash Module
@@ -13,10 +15,10 @@ module.exports = async function (data) {
 
     // Create Settings
     const booru_settings = _.defaultsDeep({}, data.module, {
-        
+
         // ID
         id: 'derpibooru',
-        
+
         // DB
         db: {
             type: 'ref',
@@ -79,16 +81,42 @@ module.exports = async function (data) {
                     // Fetch
                     const fetch = require('node-fetch');
 
-                    // Response
-                    const response = await fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=1&per_page=${encodeURIComponent(tinyCfg.per_page)}`);
+                    // Image List
+                    const image_list = [];
+                    let total_images = 0;
 
-                    // Search Items
-                    const result = await response.json();
+                    await require('for-promise')({ data: tinyCfg.pages }, function (item, fn, fn_error) {
+
+                        // Page
+                        const page = item + 1;
+
+                        // Response
+                        const response = await fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=${String(page)}&per_page=${encodeURIComponent(tinyCfg.per_page)}`);
+
+                        // Search Items
+                        response.json().then(result => {
+
+                            // Get Total Result
+                            total_images = result.total;
+
+                            // Check Results
+                            if (Array.isArray(result.images) && result.images.length > 0 && typeof result.total === "number" && result.total > 0) {
+
+                            }
+
+                        }).catch(err => {
+                            fn_error(err);
+                        });
+
+                        // Complete
+                        return;
+
+                    });
 
                     // Exist Data
-                    if (Array.isArray(result.images) && result.images.length > 0 && typeof result.total === "number" && result.total > 0) {
-                        await derpibooru.getDBItem('itemTotal').set(result.total)
-                        errorResult.data = await derpibooru.updateDatabase(result.images);
+                    if (Array.isArray(image_list) && image_list.length > 0 && typeof result.total === "number" && result.total > 0) {
+                        await derpibooru.getDBItem('itemTotal').set(total_images)
+                        errorResult.data = await derpibooru.updateDatabase(image_list);
                     }
 
                 }
