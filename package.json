@@ -21,6 +21,7 @@
   "homepage": "https://github.com/TinyPudding/Firebase-Derpibooru-Database#readme",
   "dependencies": {
     "@tinypudding/firebase-booru-database": "^1.1.0",
+    "lodash": "^4.17.20",
     "node-fetch": "^2.6.1"
   }
 }

@@ -1,20 +1,29 @@
 module.exports = async function (data) {
 
-    // Booru
-    const booruDatabase = require('@tinypudding/firebase-booru-database');
+    // Lodash Module
+    const _ = require('lodash');
 
-    // Derpibooru
-    const derpibooru = new booruDatabase({
+    const tinyCfg = _.defaultsDeep({}, data.config, {
+        timeout: 10,
+        pages: 1,
+        query: '*',
+        filter_id: 56027,
+        per_page: 100
+    });
+
+    // Create Settings
+    const booru_settings = _.defaultsDeep({}, data.module, {
+        
+        // ID
         id: 'derpibooru',
-        name: 'Derpibooru',
-        url: 'https://derpibooru.org',
-        module_name: 'derpibooru_http_api_v1',
-        tagListVar: 'tags',
-        idVar: 'id',
+        
+        // DB
         db: {
             type: 'ref',
-            data: app.db
+            data: null
         },
+
+        // Byte Limit
         byteLimit: {
 
             // JSON
@@ -30,6 +39,26 @@ module.exports = async function (data) {
 
         }
     });
+
+    // Main Config
+    const mainConfig = {
+        name: 'Derpibooru',
+        url: 'https://derpibooru.org',
+        module_name: 'derpibooru_http_api_v1',
+        tagListVar: 'tags',
+        idVar: 'id',
+    };
+
+    // Config Fusion
+    for (const item in mainConfig) {
+        booru_settings[item] = mainConfig[item];
+    }
+
+    // Booru
+    const booruDatabase = require('@tinypudding/firebase-booru-database');
+
+    // Derpibooru
+    const derpibooru = new booruDatabase(booru_settings);
 
     // Prepare Module
     const items_to_use = {};
@@ -51,7 +80,7 @@ module.exports = async function (data) {
                     const fetch = require('node-fetch');
 
                     // Response
-                    const response = await fetch('https://derpibooru.org/api/v1/json/search/images?q=*&filter_id=56027&page=1&per_page=100');
+                    const response = await fetch(`${mainConfig.url}/api/v1/json/search/images?q=*&filter_id=56027&page=1&per_page=100`);
 
                     // Search Items
                     const result = await response.json();
@@ -80,7 +109,7 @@ module.exports = async function (data) {
 
                 // Send Error
                 try {
-                    await derpibooru.error({ message: err.message, timeout: 10 });
+                    await derpibooru.error({ message: err.message, timeout: tinyCfg.timeout });
                     reject(err);
                 }
 
