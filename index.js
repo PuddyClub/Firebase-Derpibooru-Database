@@ -1,4 +1,4 @@
-module.exports = async function (data) {
+module.exports = function (data) {
 
     // Lodash Module
     const _ = require('lodash');
