@@ -8,7 +8,7 @@ module.exports = async function (data) {
         pages: 1,
         query: '*',
         filter_id: 56027,
-        per_page: 100
+        per_page: 50
     });
 
     // Create Settings
@@ -80,7 +80,7 @@ module.exports = async function (data) {
                     const fetch = require('node-fetch');
 
                     // Response
-                    const response = await fetch(`${mainConfig.url}/api/v1/json/search/images?q=*&filter_id=56027&page=1&per_page=100`);
+                    const response = await fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=1&per_page=${encodeURIComponent(tinyCfg.per_page)}`);
 
                     // Search Items
                     const result = await response.json();
