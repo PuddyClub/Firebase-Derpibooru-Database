@@ -89,27 +89,36 @@ module.exports = async function (data) {
                         const page = item + 1;
 
                         // Response
-                        const response = await fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=${String(page)}&per_page=${encodeURIComponent(tinyCfg.per_page)}`);
+                        fetch(`${mainConfig.url}/api/v1/json/search/images?q=${encodeURIComponent(tinyCfg.query)}&filter_id=${encodeURIComponent(tinyCfg.filter_id)}&page=${String(page)}&per_page=${encodeURIComponent(tinyCfg.per_page)}`).then(response => {
 
-                        // Search Items
-                        response.json().then(result => {
+                            // Search Items
+                            response.json().then(result => {
 
-                            // Get Total Result
-                            total_images = result.total;
+                                // Get Total Result
+                                total_images = result.total;
 
-                            // Check Results
-                            if (Array.isArray(result.images) && result.images.length > 0 && typeof result.total === "number" && result.total > 0) {
-                                for (const image in result.images) {
-                                    image_list.push(result.images[image]);
+                                // Check Results
+                                if (Array.isArray(result.images) && result.images.length > 0 && typeof result.total === "number" && result.total > 0) {
+                                    for (const image in result.images) {
+                                        image_list.push(result.images[image]);
+                                    }
                                 }
-                            }
+
+                                // Complete
+                                fn();
+                                return;
+
+                            }).catch(err => {
+                                fn_error(err);
+                                return;
+                            });
 
                             // Complete
-                            fn();
                             return;
 
                         }).catch(err => {
                             fn_error(err);
+                            return;
                         });
 
                         // Complete
