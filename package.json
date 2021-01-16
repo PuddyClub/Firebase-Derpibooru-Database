@@ -1,6 +1,6 @@
 {
   "name": "@tinypudding/firebase-derpibooru-database",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Script to synchronize data from Derpibooru with Firebase Database Realtime.",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/TinyPudding/Firebase-Derpibooru-Database#readme",
   "dependencies": {
-    "@tinypudding/firebase-philomena-database": "^1.0.0"
+    "@tinypudding/firebase-philomena-database": "^1.0.1"
   }
 }
